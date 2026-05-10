@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+<title>Brinco</title>
+<style>
+  :root{
+    --navH:64px;
+    --blue:#0057b8;
+    --blue2:#003f8f;
+    --yellow:#ffd51f;
+    --yellow2:#ffea7a;
+    --bg:#f4f4f6;
+    --card:#ffffff;
+    --text:#263238;
+    --muted:#737b85;
+    --danger:#c62828;
+    --ok:#2e7d32;
+    --warn:#fbc02d;
+    --radius:16px;
+    --pill:999px;
+    --shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+  *{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);overflow:hidden}
+  body.dark{
+    --bg:#10151c;
+    --card:#17202b;
+    --text:#ffffff;
+    --muted:#c7d0dd;
+    --shadow:0 6px 16px rgba(0,0,0,.9);
+  }
+
+  .app{height:100%;display:flex;flex-direction:column;background:var(--bg)}
+  .content{flex:1;position:relative;padding-bottom:var(--navH)}
+  .tab{position:absolute;inset:0;display:none;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--bg)}
+  .tab.active{display:block}
+
+  .phone{width:100%;max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;background:var(--bg)}
+  .header{
+    background:linear-gradient(135deg,var(--blue),var(--blue2));
+    color:#fff;
+    padding:14px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+  }
+  .header .inner{text-align:center}
+  .header .title{font-size:24px;font-weight:950;color:var(--yellow);letter-spacing:.4px;text-shadow:0 2px 3px rgba(0,0,0,.35)}
+  .header .sub{font-size:13px;opacity:.98;margin-top:3px;color:#fff;font-weight:800}
+  .btn-theme{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--yellow);font-size:24px;cursor:pointer;padding:4px}
+
+  .main{padding:10px 10px 80px;flex:1}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 14px 12px;margin-bottom:10px;color:var(--text)}
+  .date{font-size:16px;font-weight:900;text-align:center;margin-bottom:4px}
+  .draw{font-size:13px;text-align:center;color:var(--muted);font-weight:800}
+  .badge{display:inline-flex;align-items:center;justify-content:center;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:900;background:rgba(0,87,184,.08);color:var(--blue);margin:8px auto 0;text-align:center;line-height:1.25}
+  body.dark .badge{background:rgba(255,213,31,.10);color:var(--yellow)}
+
+  .sections{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+  .section{border-radius:16px;overflow:hidden;background:var(--card);border:1px solid rgba(0,0,0,.07)}
+  body.dark .section{border-color:#2d3a49}
+  .section-header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:var(--yellow);padding:8px 10px;font-size:13px;font-weight:950;text-align:center;text-transform:uppercase;letter-spacing:.4px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .section-body{padding:10px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+  .ball{min-width:36px;min-height:36px;padding:7px 0;border-radius:var(--pill);background:#fff;border:1px solid rgba(0,0,0,.12);box-shadow:0 2px 6px rgba(0,0,0,.13);font-size:15px;text-align:center;font-weight:900;color:#123b70;display:inline-flex;align-items:center;justify-content:center}
+  body.dark .ball{background:#263343;color:#fff;border-color:rgba(255,255,255,.1);box-shadow:0 2px 6px rgba(0,0,0,.8)}
+  .ball.hit{background:var(--ok)!important;color:#fff!important;border-color:var(--ok)!important}
+  .ball.consulta{background:var(--yellow)!important;color:#111!important;border-color:#fbc02d!important}
+  .row-center{display:flex;justify-content:center}
+  .small{font-size:12px;color:var(--muted);font-weight:700}
+  .center{text-align:center}
+  .title2{font-size:20px;font-weight:950;text-align:center;margin:0;color:var(--text)}
+  body.dark .title2{color:#fff}
+
+  .btn-big,.btn-add,.btn-secondary,.btn-danger{width:100%;padding:14px 12px;border:none;border-radius:14px;font-weight:950;font-size:16px;cursor:pointer;box-shadow:var(--shadow);letter-spacing:.2px}
+  .btn-big,.btn-add{background:#000;color:#fff}
+  .btn-big.yellow,.btn-add.yellow{background:#000;color:var(--yellow)}
+  .btn-secondary{background:#e2e7ef;color:#111}
+  body.dark .btn-secondary{background:#243144;color:#fff}
+  .btn-danger{background:var(--danger);color:#fff}
+  .btn-blue{background:var(--blue)!important;color:var(--yellow)!important}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn-row > *{flex:1}
+
+  .nav{height:var(--navH);position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid rgba(0,0,0,.12);display:flex;z-index:9999}
+  body.dark .nav{background:#121923;border-top-color:#2d3a49}
+  .nav button{flex:1;border:0;background:transparent;padding:6px 2px;font-size:12px;color:#5e6570;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}
+  body.dark .nav button{color:#b9c3d1}
+  .nav .ico{font-size:20px;line-height:1}
+  .nav button.active{color:var(--blue);font-weight:900}
+  body.dark .nav button.active{color:var(--yellow)}
+
+  .tabla{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid rgba(0,0,0,.10);margin:10px 0 2px}
+  body.dark .tabla{border-color:rgba(255,255,255,.12)}
+  .tabla th{background:rgba(0,87,184,.10);color:var(--text);font-size:12px;padding:10px 8px;text-align:center;font-weight:950;letter-spacing:.3px}
+  body.dark .tabla th{background:rgba(255,213,31,.10);color:#fff}
+  .tabla td{padding:10px 8px;text-align:center;font-size:13px;font-weight:800;border-top:1px solid rgba(0,0,0,.08)}
+  body.dark .tabla td{border-top:1px solid rgba(255,255,255,.10)}
+
+  /* Mis jugadas */
+  .mis-jugadas-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .mis-jugadas-top .title2{flex:1;margin:0}
+  .share-spacer{width:78px;min-width:78px}
+  .btn-share-mini{width:78px;min-width:78px;border:none;border-radius:10px;background:#000;color:var(--yellow);font-size:11px;line-height:1.05;font-weight:950;padding:8px 6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  body.dark .btn-share-mini{background:#fff;color:#111;box-shadow:0 2px 8px rgba(0,0,0,.7)}
+  #lista-jugadas.jugadas-scroll-box{max-height:322px;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(0,0,0,.32);border-radius:8px;padding:4px;margin-top:10px!important}
+  body.dark #lista-jugadas.jugadas-scroll-box{border-color:rgba(255,255,255,.32)}
+  #lista-jugadas.jugadas-scroll-box .list-item:last-child{margin-bottom:0}
+  .list-item{display:block;padding:10px 10px 9px;border-radius:12px;background:#fff;border:1px solid #ddd;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-bottom:10px;cursor:pointer}
+  body.dark .list-item{background:#202b38;border-color:#344150;box-shadow:0 2px 6px rgba(0,0,0,.9)}
+  .list-item.win{background:#19f219!important;border-color:#11c711!important}
+  .list-item.lose{background:#ff4b3e!important;border-color:#ef3f31!important}
+  .list-item.pending{background:#ffd54f!important;border-color:#fbc02d!important}
+  .list-item.win *, .list-item.lose *, .list-item.pending *{color:#111!important}
+  .item-main{width:100%;min-width:0}
+  .item-title{font-size:12px;font-weight:950;line-height:1.15;margin-bottom:2px}
+  .item-nums{font-size:clamp(15px,4.6vw,18px);font-weight:950;letter-spacing:.45px;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:clip}
+  .item-note{font-size:12px;font-weight:900;color:var(--muted);line-height:1.15;margin-top:2px}
+  .item-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:6px;flex-wrap:nowrap}
+  .item-detalles{font-size:13px;font-weight:950;color:#111!important;line-height:1}
+  .fav-btn{background:none;border:none;color:#111;font-size:18px;font-weight:950;cursor:pointer;padding:0 2px;min-width:34px;height:24px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .fav-btn.on{color:#111!important;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+  .estado-carita{width:26px;height:26px;font-size:20px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:#111;font-weight:900;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui,sans-serif}
+  .icon-btn{background:none;border:none;font-size:20px;cursor:pointer}
+  .icon-edit{color:#1976d2}
+  .icon-del{color:var(--danger)}
+
+  .screen{display:none}
+  .screen.active{display:block}
+  .select{width:100%;padding:12px;border-radius:12px;border:1px solid #ccd3dc;font-weight:900;background:var(--card);color:var(--text);font-size:14px}
+  body.dark .select{border-color:#344150;background:#121923;color:#fff}
+
+  /* Modales */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;align-items:center;justify-content:center;z-index:50;padding:10px}
+  .modal{background:var(--card);border-radius:16px;padding:16px;width:92%;max-width:390px;box-shadow:var(--shadow);color:var(--text)}
+  .modal-title{font-size:17px;font-weight:950;text-align:center;margin-bottom:8px}
+  .modal-buttons{display:flex;gap:8px;margin-top:12px}
+  .btn-modal{flex:1;padding:11px;border:none;border-radius:12px;font-weight:950;cursor:pointer}
+  .btn-cancel{background:#e0e0e0;color:#222}
+  body.dark .btn-cancel{background:#334050;color:#fff}
+  .btn-save{background:#000;color:#fff}
+  .input{width:100%;padding:10px;border-radius:12px;border:1px solid #ccc;background:#fff;color:#111;text-align:center;font-size:15px;font-weight:800}
+  .error-msg{color:var(--danger);font-size:12px;text-align:center;min-height:16px;margin-top:5px;font-weight:800}
+
+  /* Selector de números */
+  .picker-sheet{width:100%;max-width:480px;height:100vh;background:var(--bg);display:flex;flex-direction:column}
+  .picker-topbar{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:14px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  .picker-title{font-weight:950;font-size:16px;color:var(--yellow)}
+  .picker-sub{font-size:12px;opacity:.95;margin-top:2px;font-weight:800;color:#fff}
+  .picker-close{background:none;border:none;color:var(--yellow);font-size:26px;line-height:1;cursor:pointer;padding:2px 6px}
+  .picker-content{padding:12px 10px 14px;flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+  .picker-selected-row{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px;margin-bottom:10px;text-align:center}
+  .picker-selected-title{font-size:13px;font-weight:950;margin-bottom:8px}
+  .picker-selected-balls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:40px}
+  .picker-grid{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:10px;margin-bottom:10px}
+  .picker-grid-inner{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  @media (min-width:380px){.picker-grid-inner{grid-template-columns:repeat(6,1fr)}}
+  .num-btn{border:none;border-radius:10px;padding:14px 0;font-weight:950;font-size:16px;cursor:pointer;background:#7f8b99;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  body.dark .num-btn{background:#526173;box-shadow:0 2px 6px rgba(0,0,0,.9)}
+  .num-btn.selected{background:var(--ok)!important;color:#fff!important}
+  .picker-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;font-weight:800}
+  .picker-actions{padding:10px}
+  .hidden{display:none!important}
+
+  /* Compartir */
+  .modal-compartir{width:96%;max-width:440px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:16px}
+  .share-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .share-title{font-size:18px;font-weight:950;color:var(--text);line-height:1.15}
+  .share-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.25;font-weight:800}
+  .share-close{border:none;background:transparent;color:var(--blue);font-size:24px;line-height:1;font-weight:950;cursor:pointer;padding:0 3px}
+  body.dark .share-close{color:var(--yellow)}
+  .share-tools{display:flex;gap:8px;margin:8px 0 10px}
+  .share-tool-btn{flex:1;border:none;border-radius:10px;padding:9px 8px;font-size:12px;font-weight:950;cursor:pointer;background:#e0e6ef;color:#111}
+  body.dark .share-tool-btn{background:#334050;color:#fff}
+  .share-list{overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:38vh;padding-right:3px;display:flex;flex-direction:column;gap:9px}
+  .share-row{border:1px solid rgba(0,0,0,.10);background:var(--card);border-radius:13px;padding:12px 10px;display:flex;align-items:center;gap:12px;cursor:default;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  body.dark .share-row{border-color:#344150;box-shadow:0 2px 8px rgba(0,0,0,.65)}
+  .share-row.on{border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,87,184,.18)}
+  body.dark .share-row.on{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(255,213,31,.20)}
+  .share-check{width:32px;height:32px;border-radius:9px;border:2px solid #999;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:950;flex:0 0 32px;background:transparent;cursor:pointer;touch-action:manipulation;font-size:18px}
+  .share-row.on .share-check{background:var(--blue);border-color:var(--blue);color:var(--yellow)}
+  .share-info{min-width:0;flex:1}
+  .share-name{font-size:12px;font-weight:950;color:var(--text);margin-bottom:3px}
+  .share-nums{font-size:16px;font-weight:950;letter-spacing:.4px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .share-preview-label{margin-top:12px;margin-bottom:6px;font-size:13px;font-weight:950;color:var(--text)}
+  .share-preview{width:100%;min-height:86px;resize:none;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:#f7f7f7;color:#111;padding:10px;font-size:15px;font-weight:900;line-height:1.45;user-select:text;-webkit-user-select:text}
+  body.dark .share-preview{background:#10151c;color:#fff;border-color:#344150}
+  .share-status{min-height:18px;margin-top:7px;font-size:12px;color:var(--muted);text-align:center;font-weight:800}
+  .share-actions{display:flex;gap:8px;margin-top:10px}
+  .share-action-copy,.share-action-main{flex:1;border:none;border-radius:12px;padding:12px 10px;color:#fff;font-weight:950;cursor:pointer;font-size:14px}
+  .share-action-copy{background:var(--blue);color:var(--yellow)}
+  .share-action-main{background:#000;color:#fff}
+  .share-empty{text-align:center;color:var(--muted);font-weight:900;padding:14px 8px}
+
+  .toast{position:fixed;left:50%;bottom:calc(var(--navH) + 14px);transform:translateX(-50%);background:#000;color:#fff;padding:10px 12px;border-radius:12px;font-size:14px;display:none;z-index:10000;max-width:92%;text-align:center;font-weight:800;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .toast.show{display:block}
+
+  /* ===== ACCESIBILIDAD / WEBVIEW ANDROID =====
+     Mantiene el comportamiento táctil limpio como en Loto Plus y Quini 6:
+     sin resaltado celeste al tocar botones, pero permitiendo copiar texto en inputs/selects/preview.
+  */
+  html, body,
+  .app, .content, .phone, .main, .card, .section, .section-header, .section-body,
+  .ball, .badge, .list-item, .item-actions, .nav, .nav button,
+  button, .btn-big, .btn-add, .btn-secondary, .btn-danger, .btn-modal,
+  .btn-share-mini, .share-tool-btn, .share-action-copy, .share-action-main,
+  .icon-btn, .num-btn, .picker-sheet, .picker-topbar, .picker-content, .picker-grid,
+  .picker-selected-row, .modal, .modal-overlay, a.btn-add{
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    outline: none !important;
+  }
+
+  button:focus,
+  button:active,
+  .num-btn:focus,
+  .num-btn:active,
+  .ball:focus,
+  .ball:active,
+  .list-item:focus,
+  .list-item:active,
+  .nav button:focus,
+  .nav button:active,
+  a.btn-add:focus,
+  a.btn-add:active{
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+  }
+
+  input,
+  textarea,
+  select,
+  .share-preview{
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    -webkit-touch-callout: default !important;
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus{
+    outline: none;
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="content">
+    <section id="tab-ultimo" class="tab active">
+      <div class="phone">
+        <header class="header">
+          <div class="inner">
+            <div class="title">Brinco</div>
+            <div class="sub" id="sub-ultimo">Último sorteo</div>
+          </div>
+          <button class="btn-theme" type="button" aria-label="Cambiar tema">🌙</button>
+        </header>
+        <main class="main">
+          <section id="ultimo-screen-main" class="screen active">
+            <section class="card">
+              <div class="date" id="ultimo-fecha"></div>
+              <div class="draw" id="ultimo-nro"></div>
+              <div class="row-center"><div class="badge" id="ultimo-pozo"></div></div>
+              <div class="sections" id="ultimo-secciones"></div>
+              <div style="margin-top:12px"><button class="btn-big yellow" id="btn-ultimo-detalles">DETALLES</button></div>
+            </section>
+          </section>
+
+          <section id="ultimo-screen-detalles" class="screen">
+            <section class="card">
+              <div class="date" id="detalle-fecha"></div>
+              <div class="draw" id="detalle-nro"></div>
+              <div id="detalle-tablas"></div>
+              <div class="small center" style="margin-top:10px" id="detalle-nota"></div>
+              <div style="margin-top:12px"><button class="btn-big yellow" id="btn-ultimo-volver">VOLVER</button></div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </section>
+
+    <section id="tab-jugadas" class="tab">
+      <div class="phone">
+        <header class="header">
+          <div class="inner">
+            <div class="title">Brinco</div>
+            <div class="sub" id="sub-jugadas">Controlar jugadas</div>
+          </div>
+          <button class="btn-theme" type="button" aria-label="Cambiar tema">🌙</button>
+        </header>
+        <main class="main">
+          <section id="jug-screen-main" class="screen active">
+            <section class="card">
+              <div class="mis-jugadas-top">
+                <span class="share-spacer"></span>
+                <h2 class="title2">Mis jugadas</h2>
+                <button class="btn-share-mini" id="btn-compartir-jugadas" type="button">Compartir<br>jugadas</button>
+              </div>
+              <div id="lista-jugadas" style="margin-top:10px"></div>
+              <button class="btn-danger" id="btn-borrar-todas" style="margin-top:10px">Borrar TODAS las jugadas</button>
+              <button class="btn-add yellow" id="btn-agregar-jugada" style="margin-top:10px">Agregar jugada</button>
+              <button class="btn-secondary" id="btn-ir-ultimos" style="margin-top:10px">Últimos 10 sorteos</button>
+            </section>
+          </section>
+
+          <section id="jug-screen-detalle" class="screen">
+            <section class="card">
+              <button class="btn-secondary" id="btn-volver-jugadas">← Mis jugadas</button>
+              <h2 class="title2" id="detalle-jugada-titulo" style="margin-top:10px"></h2>
+              <div class="section-body" id="detalle-jugada-bolas" style="margin-top:8px"></div>
+              <div id="detalle-jugada-ultimo" style="margin-top:12px"></div>
+            </section>
+          </section>
+
+          <section id="jug-screen-ultimos" class="screen">
+            <section class="card">
+              <button class="btn-secondary" id="btn-volver-ultimos">← Volver</button>
+              <h2 class="title2" style="margin-top:10px">Últimos 10 sorteos</h2>
+              <div class="small center" style="margin-top:8px;line-height:1.45">Elegí una jugada guardada o tocá “Elegir números” para controlar contra un sorteo.</div>
+
+              <div style="margin-top:12px">
+                <div class="small" style="font-weight:950;margin-bottom:6px">Elegí una jugada</div>
+                <select id="ultimos-select-jugada" class="select"><option value="">— Seleccionar —</option></select>
+                <button class="btn-add yellow" id="btn-ultimos-custom" style="margin-top:10px">Elegir números</button>
+                <div id="ultimos-pick" class="section-body" style="margin-top:10px"></div>
+              </div>
+
+              <div style="margin-top:14px">
+                <div class="small" style="font-weight:950;margin-bottom:6px">Sorteo</div>
+                <select id="ultimos-select-sorteo" class="select"></select>
+              </div>
+              <div id="ultimos-resultado" style="margin-top:14px"></div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </section>
+
+    <section id="tab-wa" class="tab">
+      <div class="phone">
+        <header class="header">
+          <div class="inner">
+            <div class="title">Brinco</div>
+            <div class="sub">WhatsApp</div>
+          </div>
+          <button class="btn-theme" type="button" aria-label="Cambiar tema">🌙</button>
+        </header>
+        <main class="main">
+          <section class="card">
+            <h2 class="title2">Atención por WhatsApp</h2>
+            <div class="small center" style="margin-top:10px;line-height:1.6;text-align:left">
+              <p style="margin:0 0 10px;text-align:center">
+                ¡Hola! Consultanos para recibir más información sobre cómo realizar tu jugada vía WhatsApp.
+              </p>
+
+              <div style="background:rgba(0,87,184,.08);border-radius:12px;padding:10px 12px;font-weight:950;line-height:1.8">
+                Loto Plus<br>
+                Quini 6<br>
+                Telekino<br>
+                Brinco<br>
+                Loto 5 Plus
+              </div>
+
+              <p style="margin:12px 0 0;text-align:center">
+                En Tómbola/Quiniela solo realizamos jugadas de las siguientes provincias:
+                <strong>Salteña, Jujeña, La Ciudad y Provincia de Buenos Aires</strong>.
+              </p>
+            </div>
+
+            <a class="btn-add yellow"
+               href="https://wa.me/5493873538411?text=Hola%2C%20me%20pueden%20pasar%20informaci%C3%B3n"
+               target="_blank"
+               rel="noopener"
+               style="display:block;text-align:center;text-decoration:none;margin-top:14px">
+               Contactar por WhatsApp
+            </a>
+          </section>
+        </main>
+      </div>
+    </section>
+
+    <section id="tab-ruleta" class="tab">
+      <div class="phone">
+        <header class="header">
+          <div class="inner">
+            <div class="title">Brinco</div>
+            <div class="sub">Ruleta</div>
+          </div>
+          <button class="btn-theme" type="button" aria-label="Cambiar tema">🌙</button>
+        </header>
+        <main class="main">
+          <section class="card">
+            <h2 class="title2">Generador Brinco</h2>
+            <div class="small center" style="margin-top:8px">Genera 6 números distintos del 00 al 39.</div>
+            <div class="section-body" id="ruleta-bolas" style="margin-top:12px"></div>
+            <button class="btn-add yellow" id="btn-ruleta-generar" style="margin-top:12px">Generar jugada</button>
+            <button class="btn-secondary" id="btn-ruleta-guardar" style="margin-top:10px">Guardar en Mis jugadas</button>
+          </section>
+        </main>
+      </div>
+    </section>
+  </div>
+
+  <nav class="nav" role="navigation" aria-label="Barra inferior">
+    <button class="active" data-tab="ultimo" type="button"><div class="ico">🏠</div><div>Último</div></button>
+    <button data-tab="jugadas" type="button"><div class="ico">✅</div><div>Jugadas</div></button>
+    <button data-tab="wa" type="button"><div class="ico">💬</div><div>WhatsApp</div></button>
+    <button data-tab="ruleta" type="button"><div class="ico">🎡</div><div>Ruleta</div></button>
+  </nav>
+</div>
+
+<!-- SELECTOR DE NÚMEROS -->
+<div class="modal-overlay" id="picker-overlay">
+  <div class="picker-sheet">
+    <div class="picker-topbar">
+      <div>
+        <div class="picker-title" id="picker-title">Elegí tus 6 números</div>
+        <div class="picker-sub" id="picker-sub">Tocá para marcar / desmarcar</div>
+      </div>
+      <button class="picker-close" id="picker-close" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="picker-content">
+      <div class="picker-selected-row">
+        <div class="picker-selected-title" id="picker-count">Seleccionados: 0 / 6</div>
+        <div class="picker-selected-balls" id="picker-selected-balls"></div>
+      </div>
+      <div class="picker-grid">
+        <div class="picker-grid-inner" id="picker-grid"></div>
+        <div class="picker-hint">Cuando elijas 6 números, se cierra solo ✅</div>
+      </div>
+    </div>
+    <div class="picker-actions"><button class="btn-big yellow" id="picker-cancel">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- MODAL GUARDAR -->
+<div class="modal-overlay" id="modal-guardar">
+  <div class="modal">
+    <div class="modal-title">Guardar jugada</div>
+    <div class="small center" style="margin-bottom:8px">Elegí un nombre para esta jugada.</div>
+    <input class="input" id="input-guardar-nombre" type="text" maxlength="35" />
+    <div id="guardar-error" class="error-msg"></div>
+    <div class="section-body" id="guardar-preview"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-cancel" id="guardar-cancelar">Cancelar</button>
+      <button class="btn-modal btn-save" id="guardar-confirmar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="modal-editar">
+  <div class="modal">
+    <div class="modal-title">Editar jugada</div>
+    <input class="input" id="input-editar-nombre" type="text" maxlength="35" />
+    <div class="section-body" id="editar-preview"></div>
+    <button class="btn-secondary" id="editar-cambiar-numeros" style="margin-top:8px">Cambiar números</button>
+    <div id="editar-error" class="error-msg"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-cancel" id="editar-cancelar">Cancelar</button>
+      <button class="btn-modal btn-save" id="editar-confirmar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR -->
+<div class="modal-overlay" id="modal-confirmar">
+  <div class="modal">
+    <div class="modal-title" id="confirmar-titulo">Confirmar</div>
+    <div class="small center" id="confirmar-texto" style="line-height:1.4"></div>
+    <div class="modal-buttons">
+      <button class="btn-modal btn-cancel" id="confirmar-cancelar">Cancelar</button>
+      <button class="btn-modal btn-save" id="confirmar-aceptar">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COMPARTIR -->
+<div class="modal-overlay" id="modal-compartir">
+  <div class="modal modal-compartir">
+    <div class="share-head">
+      <div>
+        <div class="share-title">Compartir jugadas</div>
+        <div class="share-sub">Seleccioná una o varias jugadas. Las favoritas aparecen primero.</div>
+      </div>
+      <button class="share-close" id="share-close">✕</button>
+    </div>
+    <div class="share-tools">
+      <button class="share-tool-btn" id="share-all">Seleccionar todo</button>
+      <button class="share-tool-btn" id="share-none">Quitar selección</button>
+    </div>
+    <div class="share-list" id="share-list"></div>
+    <div class="share-preview-label">Vista previa</div>
+    <textarea class="share-preview" id="share-preview" readonly></textarea>
+    <div class="share-status" id="share-status"></div>
+    <div class="share-actions">
+      <button class="share-action-copy" id="share-copy">Copiar</button>
+      <button class="share-action-main" id="share-wpp">WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_TEMA = "brinco_tema_global";
+  const STORAGE_JUGADAS = "brinco_mis_jugadas_v1";
+  const MAX_NUM = 39;
+  const PICK_COUNT = 6;
+
+  const ULTIMOS = [
+    {
+      nro:"1352", fecha:"Domingo 03/05/2026", fechaCorta:"03/05/2026", proximo:"Domingo 10/05/2026", pozo:"$ 750.000.000",
+      brinco:["05","16","22","30","32","38"], junior:["05","08","21","22","25","31"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 645.893.061,51"},
+        {aciertos:"5", ganadores:"14", premio:"$ 406.999,48"},
+        {aciertos:"4", ganadores:"308", premio:"$ 6.104,99"},
+        {aciertos:"3", ganadores:"4.856", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"11", premio:"$ 2.589.184,00", pozo:"$ 28.481.023,98"}],
+      nota:"*Dicho pozo pasa a incrementar el primer premio del concurso siguiente según artículo 33º del reglamento."
+    },
+    {
+      nro:"1351", fecha:"Domingo 26/04/2026", fechaCorta:"26/04/2026", proximo:"Domingo 03/05/2026", pozo:"$ 700.000.000",
+      brinco:["01","15","16","29","34","36"], junior:["12","18","19","22","24","30"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 607.494.934,00"},
+        {aciertos:"5", ganadores:"9", premio:"$ 642.491,55"},
+        {aciertos:"4", ganadores:"217", premio:"$ 8.793,55"},
+        {aciertos:"3", ganadores:"3.182", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"15", premio:"$ 1.926.869,86"}]
+    },
+    {
+      nro:"1350", fecha:"Domingo 19/04/2026", fechaCorta:"19/04/2026", proximo:"Domingo 26/04/2026", pozo:"$ 650.000.000",
+      brinco:["08","11","14","16","20","24"], junior:["01","04","13","20","30","38"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 568.426.787,00"},
+        {aciertos:"5", ganadores:"11", premio:"$ 521.216,00"},
+        {aciertos:"4", ganadores:"544", premio:"$ 3.477,97"},
+        {aciertos:"3", ganadores:"6.319", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"6", premio:"$ 4.776.314,20"}]
+    },
+    {
+      nro:"1349", fecha:"Domingo 12/04/2026", fechaCorta:"12/04/2026", proximo:"Domingo 19/04/2026", pozo:"$ 615.000.000",
+      brinco:["05","09","14","16","17","26"], junior:["18","19","21","24","27","37"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 529.717.024,00"},
+        {aciertos:"5", ganadores:"12", premio:"$ 476.728,67"},
+        {aciertos:"4", ganadores:"399", premio:"$ 4.731,44"},
+        {aciertos:"3", ganadores:"6.386", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"2", premio:"$ 14.297.372,53"}]
+    },
+    {
+      nro:"1348", fecha:"Domingo 05/04/2026", fechaCorta:"05/04/2026", proximo:"Domingo 12/04/2026", pozo:"$ 530.000.000",
+      brinco:["00","12","20","25","27","30"], junior:["07","19","22","23","25","26"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 490.824.829,77"},
+        {aciertos:"5", ganadores:"3", premio:"$ 1.783.726,93"},
+        {aciertos:"4", ganadores:"220", premio:"$ 8.026,77"},
+        {aciertos:"3", ganadores:"3.587", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"8", premio:"$ 3.343.438,58"}]
+    },
+    {
+      nro:"1347", fecha:"Domingo 29/03/2026", fechaCorta:"29/03/2026", proximo:"Domingo 05/04/2026", pozo:"$ 530.000.000",
+      brinco:["01","09","14","15","22","25"], junior:["01","15","16","23","24","27"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 454.893.659,00"},
+        {aciertos:"5", ganadores:"13", premio:"$ 431.044,59"},
+        {aciertos:"4", ganadores:"459", premio:"$ 4.028,72"},
+        {aciertos:"3", ganadores:"6.202", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"8", premio:"$ 3.501.138,41"}]
+    },
+    {
+      nro:"1346", fecha:"Domingo 22/03/2026", fechaCorta:"22/03/2026", proximo:"Domingo 29/03/2026", pozo:"$ 500.000.000",
+      brinco:["10","11","13","26","28","29"], junior:["06","10","15","22","34","36"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 417.128.094,89"},
+        {aciertos:"5", ganadores:"12", premio:"$ 473.476,02"},
+        {aciertos:"4", ganadores:"366", premio:"$ 5.122,86"},
+        {aciertos:"3", ganadores:"5.058", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"2", premio:"$ 14.199.823,59"}]
+    },
+    {
+      nro:"1345", fecha:"Domingo 15/03/2026", fechaCorta:"15/03/2026", proximo:"Domingo 22/03/2026", pozo:"$ 430.000.000",
+      brinco:["17","18","21","26","36","39"], junior:["10","14","24","30","36","37"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 378.807.979,77"},
+        {aciertos:"5", ganadores:"5", premio:"$ 1.144.727,06"},
+        {aciertos:"4", ganadores:"305", premio:"$ 6.192,79"},
+        {aciertos:"3", ganadores:"5.017", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"3", premio:"$ 9.536.398,92"}]
+    },
+    {
+      nro:"1344", fecha:"Domingo 08/03/2026", fechaCorta:"08/03/2026", proximo:"Domingo 15/03/2026", pozo:"$ 390.000.000",
+      brinco:["14","15","17","18","37","38"], junior:["03","05","11","17","19","25"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 340.136.862,17"},
+        {aciertos:"5", ganadores:"3", premio:"$ 1.891.620,90"},
+        {aciertos:"4", ganadores:"189", premio:"$ 9.908,49"},
+        {aciertos:"3", ganadores:"3.701", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"24", premio:"$ 1.181.892,10"}]
+    },
+    {
+      nro:"1343", fecha:"Domingo 01/03/2026", fechaCorta:"01/03/2026", proximo:"Domingo 08/03/2026", pozo:"$ 340.000.000",
+      brinco:["04","09","15","17","19","30"], junior:["00","05","06","27","33","39"],
+      premiosBrinco:[
+        {aciertos:"6", ganadores:"Vacante*", premio:"$ 301.816.953,57"},
+        {aciertos:"5", ganadores:"9", premio:"$ 628.379,52"},
+        {aciertos:"4", ganadores:"495", premio:"$ 3.770,28"},
+        {aciertos:"3", ganadores:"6.142", premio:"$ 1.200,00"}
+      ],
+      premiosJunior:[{aciertos:"5", ganadores:"8", premio:"$ 3.533.525,69"}]
+    }
+  ];
+  const ULTIMO = ULTIMOS[0];
+
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,"0");
+  const clone = arr => (arr || []).slice();
+  const sortedNums = nums => clone(nums).map(n => pad(parseInt(n,10))).sort((a,b)=>parseInt(a,10)-parseInt(b,10));
+  const keyNums = nums => sortedNums(nums).join("-");
+  const numsText = nums => sortedNums(nums).join("-");
+  const validNums = nums => Array.isArray(nums) && nums.length === PICK_COUNT && (new Set(nums.map(n=>pad(parseInt(n,10))))).size === PICK_COUNT && nums.every(n => parseInt(n,10) >= 0 && parseInt(n,10) <= MAX_NUM);
+  const hitCount = (a,b) => a.filter(n => b.includes(n)).length;
+
+  function obtenerFechaHoy(){
+    const d = new Date();
+    const dia = String(d.getDate()).padStart(2,"0");
+    const mes = String(d.getMonth()+1).padStart(2,"0");
+    const anio = d.getFullYear();
+    return dia + "-" + mes + "-" + anio;
+  }
+
+  function fechaDesdeTimestamp(ts){
+    const n = Number(ts || 0);
+    if(!n || !isFinite(n)) return "";
+    const d = new Date(n);
+    if(isNaN(d.getTime())) return "";
+    const dia = String(d.getDate()).padStart(2,"0");
+    const mes = String(d.getMonth()+1).padStart(2,"0");
+    const anio = d.getFullYear();
+    return dia + "-" + mes + "-" + anio;
+  }
+
+  function nombreConFecha(j){
+    const nombre = (j && j.nombre) ? j.nombre : "Jugada";
+    const fecha = (j && j.fecha) ? String(j.fecha) : "";
+    return nombre + (fecha ? " (" + fecha + ")" : "");
+  }
+
+  let jugadas = [];
+  let pickerSelected = [];
+  let pickerMode = null;
+  let pickerAfter = null;
+  let pickerSuspendidoPorCambioTab = false;
+  let nuevaPendiente = null;
+  let editIndex = -1;
+  let editNumeros = [];
+  let detalleIndex = -1;
+  let ultimosNums = [];
+  let ruletaNums = [];
+  let compartirSeleccionadas = new Set();
+  let confirmarCallback = null;
+
+  function safeLSGet(key){ try{return localStorage.getItem(key)}catch(e){return null} }
+  function safeLSSet(key,val){ try{localStorage.setItem(key,val)}catch(e){} }
+
+  function showToast(msg){
+    const t = $("toast");
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(()=>t.classList.remove("show"), 2200);
+  }
+
+  function openModal(el){ if(el) el.style.display = "flex"; }
+  function closeModal(el){ if(el) el.style.display = "none"; }
+  function cerrarPicker(){
+    pickerSuspendidoPorCambioTab = false;
+    closeModal($("picker-overlay"));
+  }
+
+  function aplicarTema(tema){
+    const dark = tema === "dark";
+    document.body.classList.toggle("dark", dark);
+    document.querySelectorAll(".btn-theme").forEach(b => b.textContent = dark ? "☀️" : "🌙");
+    safeLSSet(STORAGE_TEMA, dark ? "dark" : "light");
+  }
+  function cargarTema(){ const t = safeLSGet(STORAGE_TEMA); aplicarTema(t === "dark" ? "dark" : "light"); }
+  function toggleTema(){ aplicarTema(document.body.classList.contains("dark") ? "light" : "dark"); }
+
+  function pantallaDentro(prefix, id){
+    document.querySelectorAll(`#${prefix} .screen`).forEach(s => s.classList.remove("active"));
+    const el = $(id);
+    if(el) el.classList.add("active");
+    const tab = prefix === "tab-jugadas" ? $("tab-jugadas") : $("tab-ultimo");
+    if(tab) tab.scrollTo(0,0);
+  }
+
+  function setTab(tab){
+    const modalPicker = $("picker-overlay");
+    const tabActual = document.querySelector(".tab.active");
+    const actualEsJugadas = !!(tabActual && tabActual.id === "tab-jugadas");
+    const pickerAbierto = !!(modalPicker && modalPicker.style.display === "flex");
+
+    // Si el selector está abierto en Jugadas y el usuario cambia de sección,
+    // se oculta solo visualmente para no tapar Inicio/WhatsApp/Ruleta.
+    // Al volver a Jugadas, se muestra otra vez con los mismos números seleccionados.
+    if(actualEsJugadas && pickerAbierto && tab !== "jugadas"){
+      pickerSuspendidoPorCambioTab = true;
+      modalPicker.style.display = "none";
+    }
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    const target = $("tab-"+tab);
+    if(target) target.classList.add("active");
+    document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+
+    if(tab === "jugadas"){
+      renderJugadas();
+      actualizarSelectJugadasUltimos();
+      if(pickerSuspendidoPorCambioTab && modalPicker){
+        modalPicker.style.display = "flex";
+        pickerSuspendidoPorCambioTab = false;
+        updatePicker();
+      }
+    }
+  }
+
+  function crearBall(n, cls){
+    const b = document.createElement("span");
+    b.className = "ball" + (cls ? " " + cls : "");
+    b.textContent = pad(parseInt(n,10));
+    return b;
+  }
+
+  function renderBalls(cont, nums, hits){
+    const el = typeof cont === "string" ? $(cont) : cont;
+    if(!el) return;
+    el.innerHTML = "";
+    const hitSet = new Set(hits || []);
+    (nums || []).forEach(n => el.appendChild(crearBall(n, hitSet.has(n) ? "hit" : "")));
+  }
+
+  function crearSeccionNumeros(titulo, nums, hits){
+    const sec = document.createElement("div");
+    sec.className = "section";
+    const h = document.createElement("div");
+    h.className = "section-header";
+    h.textContent = titulo;
+    const body = document.createElement("div");
+    body.className = "section-body";
+    const hitSet = new Set(hits || []);
+    nums.forEach(n => body.appendChild(crearBall(n, hitSet.has(n) ? "hit" : "")));
+    sec.appendChild(h); sec.appendChild(body);
+    return sec;
+  }
+
+  function crearTabla(lista, esJunior){
+    const table = document.createElement("table");
+    table.className = "tabla";
+    const thead = document.createElement("thead");
+    thead.innerHTML = esJunior ? "<tr><th>Aciertos</th><th>Ganadores</th><th>Premio</th></tr>" : "<tr><th>Aciertos</th><th>Ganadores</th><th>Premio</th></tr>";
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    (lista || []).forEach(r => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = "<td>"+r.aciertos+"</td><td>"+r.ganadores+"</td><td>"+(r.premio || "-")+"</td>";
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    return table;
+  }
+
+  function renderUltimo(){
+    $("ultimo-fecha").textContent = ULTIMO.fecha;
+    $("ultimo-nro").textContent = "Sorteo N° " + ULTIMO.nro;
+    $("ultimo-pozo").textContent = "Próximo sorteo " + ULTIMO.proximo.replace("Domingo ","") + " · " + ULTIMO.pozo;
+
+    const cont = $("ultimo-secciones");
+    cont.innerHTML = "";
+    cont.appendChild(crearSeccionNumeros("Brinco", ULTIMO.brinco));
+    cont.appendChild(crearSeccionNumeros("Brinco Junior Siempre Sale", ULTIMO.junior));
+  }
+
+  function renderDetallesUltimo(){
+    $("detalle-fecha").textContent = ULTIMO.fecha;
+    $("detalle-nro").textContent = "Sorteo N° " + ULTIMO.nro;
+    const cont = $("detalle-tablas");
+    cont.innerHTML = "";
+    const secB = crearSeccionNumeros("Brinco", ULTIMO.brinco);
+    secB.querySelector(".section-body").after(crearTabla(ULTIMO.premiosBrinco));
+    cont.appendChild(secB);
+    const secJ = crearSeccionNumeros("Brinco Junior", ULTIMO.junior);
+    secJ.querySelector(".section-body").after(crearTabla(ULTIMO.premiosJunior, true));
+    cont.appendChild(secJ);
+    $("detalle-nota").textContent = ULTIMO.nota || "";
+  }
+
+  function cargarJugadas(){
+    try{
+      const data = JSON.parse(safeLSGet(STORAGE_JUGADAS) || "[]");
+      jugadas = Array.isArray(data) ? data.filter(j => validNums(j.numeros)).map((j,i)=>({
+        id:j.id || (Date.now()+"-"+i),
+        nombre:j.nombre || ("Jugada " + (i+1)),
+        numeros:sortedNums(j.numeros),
+        favoritaOrden: j.favoritaOrden || null,
+        creada:j.creada || Date.now()+i,
+        fecha:j.fecha || fechaDesdeTimestamp(j.creada) || ""
+      })) : [];
+    }catch(e){ jugadas = []; }
+  }
+  function guardarJugadas(){ safeLSSet(STORAGE_JUGADAS, JSON.stringify(jugadas)); }
+
+  function jugadasOrdenadasConIndice(){
+    return jugadas.map((j,i)=>({j,i})).sort((a,b)=>{
+      const af = a.j.favoritaOrden || 999999999;
+      const bf = b.j.favoritaOrden || 999999999;
+      if(af !== bf) return af - bf;
+      return (a.j.creada || 0) - (b.j.creada || 0);
+    });
+  }
+
+  function premioBrincoPorAciertos(sorteo, aciertos){
+    if(aciertos >= 6) return "Brinco: 6 aciertos";
+    if(aciertos >= 5) return "Brinco: 5 aciertos";
+    if(aciertos >= 4) return "Brinco: 4 aciertos";
+    if(aciertos >= 3) return "Brinco: 3 aciertos";
+    return "";
+  }
+  function premioJuniorPorAciertos(sorteo, aciertos){
+    if(aciertos >= 5) return "Brinco Junior: " + aciertos + " aciertos";
+    return "";
+  }
+  function resultadoJugada(nums, sorteo){
+    const aB = hitCount(nums, sorteo.brinco);
+    const aJ = hitCount(nums, sorteo.junior);
+    const premios = [];
+    const pB = premioBrincoPorAciertos(sorteo, aB);
+    const pJ = premioJuniorPorAciertos(sorteo, aJ);
+    if(pB) premios.push(pB);
+    if(pJ) premios.push(pJ);
+    return {aB, aJ, premios, gana:premios.length>0};
+  }
+
+  function existeDuplicada(nums, exceptIndex){
+    const key = keyNums(nums);
+    return jugadas.some((j,i) => i !== exceptIndex && keyNums(j.numeros) === key);
+  }
+
+  function renderJugadas(){
+    const lista = $("lista-jugadas");
+    lista.innerHTML = "";
+    if(jugadas.length > 4) lista.classList.add("jugadas-scroll-box"); else lista.classList.remove("jugadas-scroll-box");
+    if(jugadas.length === 0){
+      const div = document.createElement("div");
+      div.className = "small center";
+      div.style.padding = "14px 8px";
+      div.textContent = "Todavía no agregaste jugadas.";
+      lista.appendChild(div);
+      actualizarSelectJugadasUltimos();
+      return;
+    }
+    const maxFav = Math.max(0, ...jugadas.map(j => j.favoritaOrden || 0));
+    jugadasOrdenadasConIndice().forEach(({j,i}) => {
+      const res = resultadoJugada(j.numeros, ULTIMO);
+      const item = document.createElement("div");
+      item.className = "list-item " + (res.gana ? "win" : "lose");
+      item.addEventListener("click", function(){ abrirDetalleJugada(i); });
+      const favLabel = j.favoritaOrden ? "⭐" + j.favoritaOrden : "☆";
+      item.innerHTML =
+        '<div class="item-main">' +
+          '<div class="item-title">' + escapeHTML(nombreConFecha(j)) + '</div>' +
+          '<div class="item-nums">' + numsText(j.numeros) + '</div>' +
+          '<div class="item-note">' + (res.gana ? 'Con premio en último sorteo' : 'Sin premio en último sorteo') + '</div>' +
+        '</div>' +
+        '<div class="item-actions">' +
+          '<span class="item-detalles">Detalles</span>' +
+          '<span class="estado-carita">' + (res.gana ? '🏆' : '😔') + '</span>' +
+          '<button class="fav-btn ' + (j.favoritaOrden ? 'on' : '') + '" data-act="fav">' + favLabel + '</button>' +
+          '<button class="icon-btn icon-edit" data-act="edit">✏️</button>' +
+          '<button class="icon-btn icon-del" data-act="del">🗑️</button>' +
+        '</div>';
+      item.querySelector('[data-act="fav"]').addEventListener("click", function(ev){
+        ev.stopPropagation();
+        if(j.favoritaOrden) j.favoritaOrden = null;
+        else j.favoritaOrden = maxFav + 1;
+        guardarJugadas(); renderJugadas(); showToast(j.favoritaOrden ? "Jugada marcada como favorita" : "Jugada quitada de favoritas");
+      });
+      item.querySelector('[data-act="edit"]').addEventListener("click", function(ev){ ev.stopPropagation(); abrirEditar(i); });
+      item.querySelector('[data-act="del"]').addEventListener("click", function(ev){ ev.stopPropagation(); confirmar("Borrar jugada", "¿Querés borrar esta jugada?", function(){ jugadas.splice(i,1); guardarJugadas(); renderJugadas(); showToast("Jugada borrada"); }); });
+      lista.appendChild(item);
+    });
+    actualizarSelectJugadasUltimos();
+  }
+
+  function escapeHTML(str){
+    return String(str || "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function abrirDetalleJugada(i){
+    detalleIndex = i;
+    const j = jugadas[i];
+    if(!j) return;
+    $("detalle-jugada-titulo").textContent = nombreConFecha(j);
+    renderBalls("detalle-jugada-bolas", j.numeros);
+    renderControlSorteo($("detalle-jugada-ultimo"), j.numeros, ULTIMO, true);
+    pantallaDentro("tab-jugadas", "jug-screen-detalle");
+  }
+
+  function renderControlSorteo(cont, nums, sorteo, incluirTitulo){
+    cont.innerHTML = "";
+    const res = resultadoJugada(nums, sorteo);
+    const box = document.createElement("div");
+    box.className = "section";
+    const head = document.createElement("div");
+    head.className = "section-header";
+    head.textContent = incluirTitulo ? ("Control contra Sorteo N° " + sorteo.nro) : ("Sorteo N° " + sorteo.nro + " · " + sorteo.fechaCorta);
+    const body = document.createElement("div");
+    body.style.padding = "10px";
+
+    const msg = document.createElement("div");
+    msg.className = "center";
+    msg.style.fontWeight = "950";
+    msg.style.margin = "0 0 10px";
+    msg.style.color = res.gana ? "var(--ok)" : "var(--danger)";
+    msg.textContent = res.gana ? ("✅ " + res.premios.join(" · ")) : "❌ Sin premio";
+    body.appendChild(msg);
+
+    const secB = crearSeccionNumeros("Brinco · " + res.aB + " aciertos", sorteo.brinco, nums.filter(n => sorteo.brinco.includes(n)));
+    body.appendChild(secB);
+    const secJ = crearSeccionNumeros("Brinco Junior · " + res.aJ + " aciertos", sorteo.junior, nums.filter(n => sorteo.junior.includes(n)));
+    body.appendChild(secJ);
+
+    if(res.gana){
+      const tablaTitle = document.createElement("div");
+      tablaTitle.className = "small center";
+      tablaTitle.style.marginTop = "10px";
+      tablaTitle.textContent = "Revisá la tabla de premios del sorteo.";
+      body.appendChild(tablaTitle);
+    }
+    box.appendChild(head); box.appendChild(body); cont.appendChild(box);
+  }
+
+  function abrirEditar(i){
+    editIndex = i;
+    const j = jugadas[i];
+    if(!j) return;
+    editNumeros = clone(j.numeros);
+    $("input-editar-nombre").value = j.nombre;
+    $("editar-error").textContent = "";
+    renderBalls("editar-preview", editNumeros);
+    openModal($("modal-editar"));
+  }
+
+  function confirmar(titulo, texto, cb){
+    $("confirmar-titulo").textContent = titulo;
+    $("confirmar-texto").textContent = texto;
+    confirmarCallback = cb;
+    openModal($("modal-confirmar"));
+  }
+
+  function guardarNueva(nombre, nums){
+    if(!validNums(nums)){ showToast("Elegí 6 números válidos"); return false; }
+    if(existeDuplicada(nums, -1)){ showToast("Números ya agregados"); return false; }
+    const ahora = Date.now();
+    jugadas.push({id:String(ahora), nombre:nombre || ("Jugada " + (jugadas.length+1)), numeros:sortedNums(nums), favoritaOrden:null, creada:ahora, fecha:obtenerFechaHoy()});
+    guardarJugadas(); renderJugadas(); showToast("Jugada guardada"); return true;
+  }
+
+  function abrirGuardar(nums, nombreSugerido){
+    nuevaPendiente = sortedNums(nums);
+    $("input-guardar-nombre").value = nombreSugerido || ("Jugada " + (jugadas.length + 1));
+    $("guardar-error").textContent = "";
+    renderBalls("guardar-preview", nuevaPendiente);
+    openModal($("modal-guardar"));
+  }
+
+  /* Picker */
+  function construirPicker(){
+    const grid = $("picker-grid");
+    grid.innerHTML = "";
+    for(let i=0;i<=MAX_NUM;i++){
+      const n = pad(i);
+      const btn = document.createElement("button");
+      btn.className = "num-btn";
+      btn.type = "button";
+      btn.dataset.num = n;
+      btn.textContent = n;
+      btn.addEventListener("click", function(){ togglePick(n); });
+      grid.appendChild(btn);
+    }
+  }
+  function openPicker(mode, initial, after){
+    pickerSuspendidoPorCambioTab = false;
+    pickerMode = mode;
+    pickerAfter = after || null;
+    pickerSelected = sortedNums(initial || []);
+    $("picker-title").textContent = "Elegí tus 6 números";
+    $("picker-sub").textContent = "Brinco: números del 00 al 39";
+    updatePicker();
+    openModal($("picker-overlay"));
+  }
+  function togglePick(n){
+    if(pickerSelected.includes(n)) pickerSelected = pickerSelected.filter(x => x !== n);
+    else{
+      if(pickerSelected.length >= PICK_COUNT){ showToast("Solo podés elegir 6 números"); return; }
+      pickerSelected.push(n);
+    }
+    pickerSelected = sortedNums(pickerSelected);
+    updatePicker();
+    if(pickerSelected.length === PICK_COUNT){
+      setTimeout(function(){
+        cerrarPicker();
+        if(typeof pickerAfter === "function") pickerAfter(clone(pickerSelected));
+      }, 180);
+    }
+  }
+  function updatePicker(){
+    $("picker-count").textContent = "Seleccionados: " + pickerSelected.length + " / " + PICK_COUNT;
+    renderBalls("picker-selected-balls", pickerSelected, pickerSelected);
+    document.querySelectorAll(".num-btn").forEach(btn => btn.classList.toggle("selected", pickerSelected.includes(btn.dataset.num)));
+  }
+
+  /* Últimos 10 */
+  function actualizarSelectJugadasUltimos(){
+    const sel = $("ultimos-select-jugada");
+    if(!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Seleccionar —</option>';
+    jugadasOrdenadasConIndice().forEach(({j,i}) => {
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = (j.favoritaOrden ? "⭐"+j.favoritaOrden+" · " : "") + nombreConFecha(j) + " · " + numsText(j.numeros);
+      sel.appendChild(opt);
+    });
+    if(prev && sel.querySelector('option[value="'+prev+'"]')) sel.value = prev;
+  }
+  function renderSelectSorteos(){
+    const sel = $("ultimos-select-sorteo");
+    sel.innerHTML = "";
+    ULTIMOS.forEach((s,idx)=>{
+      const opt = document.createElement("option");
+      opt.value = String(idx);
+      opt.textContent = "Sorteo " + s.nro + " · " + s.fechaCorta;
+      sel.appendChild(opt);
+    });
+  }
+  function abrirUltimos(){
+    actualizarSelectJugadasUltimos();
+    renderSelectSorteos();
+    if(!ultimosNums.length && jugadas.length){
+      const first = jugadasOrdenadasConIndice()[0];
+      if(first){ ultimosNums = clone(first.j.numeros); $("ultimos-select-jugada").value = String(first.i); }
+    }
+    renderBalls("ultimos-pick", ultimosNums);
+    renderUltimosResultado();
+    pantallaDentro("tab-jugadas", "jug-screen-ultimos");
+  }
+  function renderUltimosResultado(){
+    const cont = $("ultimos-resultado");
+    if(!ultimosNums.length){
+      cont.innerHTML = '<div class="small center" style="padding:12px">Elegí una jugada o números para controlar.</div>';
+      return;
+    }
+    const s = ULTIMOS[parseInt($("ultimos-select-sorteo").value || "0",10)] || ULTIMOS[0];
+    renderControlSorteo(cont, ultimosNums, s, false);
+    const lastSection = cont.querySelector(".section");
+    if(lastSection){
+      const extra = document.createElement("div");
+      extra.style.padding = "0 10px 10px";
+      extra.appendChild(crearTabla(s.premiosBrinco));
+      const jrTitle = document.createElement("div");
+      jrTitle.className = "small center";
+      jrTitle.style.marginTop = "8px";
+      jrTitle.textContent = "Premios Brinco Junior";
+      extra.appendChild(jrTitle);
+      extra.appendChild(crearTabla(s.premiosJunior, true));
+      lastSection.appendChild(extra);
+    }
+  }
+
+  /* Compartir */
+  function abrirCompartir(){
+    compartirSeleccionadas = new Set(jugadasOrdenadasConIndice().map(x => x.i));
+    renderCompartir();
+    openModal($("modal-compartir"));
+  }
+  function textoCompartir(){
+    const seleccion = jugadasOrdenadasConIndice().filter(({i}) => compartirSeleccionadas.has(i));
+    if(!seleccion.length) return "";
+    const lines = ["Mis jugadas de Brinco:"];
+    seleccion.forEach(({j}) => {
+      lines.push((j.favoritaOrden ? "⭐"+j.favoritaOrden+" " : "") + numsText(j.numeros));
+    });
+    return lines.join("\n");
+  }
+  function renderCompartir(){
+    const list = $("share-list");
+    list.innerHTML = "";
+    if(!jugadas.length){
+      list.innerHTML = '<div class="share-empty">No hay jugadas para compartir.</div>';
+      $("share-preview").value = "";
+      return;
+    }
+    jugadasOrdenadasConIndice().forEach(({j,i}) => {
+      const row = document.createElement("div");
+      row.className = "share-row" + (compartirSeleccionadas.has(i) ? " on" : "");
+      row.innerHTML = '<div class="share-check">' + (compartirSeleccionadas.has(i) ? '✓' : '') + '</div><div class="share-info"><div class="share-name">' + escapeHTML(nombreConFecha(j)) + '</div><div class="share-nums">' + (j.favoritaOrden ? '⭐'+j.favoritaOrden+' · ' : '') + numsText(j.numeros) + '</div></div>';
+      row.querySelector(".share-check").addEventListener("click", function(){
+        if(compartirSeleccionadas.has(i)) compartirSeleccionadas.delete(i); else compartirSeleccionadas.add(i);
+        renderCompartir();
+      });
+      row.addEventListener("click", function(e){
+        if(e.target.classList.contains("share-check")) return;
+        if(compartirSeleccionadas.has(i)) compartirSeleccionadas.delete(i); else compartirSeleccionadas.add(i);
+        renderCompartir();
+      });
+      list.appendChild(row);
+    });
+    $("share-preview").value = textoCompartir();
+    $("share-status").textContent = compartirSeleccionadas.size ? (compartirSeleccionadas.size + " jugada(s) seleccionada(s)") : "Seleccioná al menos una jugada";
+  }
+  function copiarTexto(txt){
+    if(!txt){ showToast("No hay jugadas seleccionadas"); return; }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(()=>showToast("Texto copiado"), ()=>fallbackCopy(txt));
+    }else fallbackCopy(txt);
+  }
+  function fallbackCopy(txt){
+    const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); showToast("Texto copiado"); }catch(e){ showToast("No se pudo copiar"); }
+    document.body.removeChild(ta);
+  }
+  function compartirWhatsApp(){
+    const txt = textoCompartir();
+    if(!txt){ showToast("No hay jugadas seleccionadas"); return; }
+    const encoded = encodeURIComponent(txt);
+    try{ window.location.href = "whatsapp://send?text=" + encoded; }
+    catch(e){ window.open("https://wa.me/?text=" + encoded, "_blank"); }
+    setTimeout(function(){
+      try{ window.open("https://wa.me/?text=" + encoded, "_blank"); }catch(e){}
+    }, 700);
+  }
+
+  /* Ruleta */
+  function generarRuleta(){
+    const pool = [];
+    for(let i=0;i<=MAX_NUM;i++) pool.push(pad(i));
+    for(let i=pool.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      const tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    ruletaNums = sortedNums(pool.slice(0,PICK_COUNT));
+    renderBalls("ruleta-bolas", ruletaNums);
+  }
+
+  function initEvents(){
+    document.querySelectorAll(".btn-theme").forEach(b => b.addEventListener("click", toggleTema));
+    document.querySelectorAll(".nav button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+
+    $("btn-ultimo-detalles").addEventListener("click", function(){ renderDetallesUltimo(); pantallaDentro("tab-ultimo", "ultimo-screen-detalles"); $("sub-ultimo").textContent = "Detalles"; });
+    $("btn-ultimo-volver").addEventListener("click", function(){ pantallaDentro("tab-ultimo", "ultimo-screen-main"); $("sub-ultimo").textContent = "Último sorteo"; });
+
+    $("btn-agregar-jugada").addEventListener("click", function(){ openPicker("add", [], nums => abrirGuardar(nums, "Jugada " + (jugadas.length + 1))); });
+    $("btn-volver-jugadas").addEventListener("click", function(){ pantallaDentro("tab-jugadas", "jug-screen-main"); });
+    $("btn-ir-ultimos").addEventListener("click", abrirUltimos);
+    $("btn-volver-ultimos").addEventListener("click", function(){ pantallaDentro("tab-jugadas", "jug-screen-main"); });
+    $("btn-borrar-todas").addEventListener("click", function(){
+      if(!jugadas.length){ showToast("No hay jugadas para borrar"); return; }
+      confirmar("Borrar TODAS", "¿Seguro que querés borrar todas las jugadas guardadas?", function(){ jugadas = []; guardarJugadas(); renderJugadas(); showToast("Todas las jugadas fueron borradas"); });
+    });
+
+    $("guardar-cancelar").addEventListener("click", function(){ closeModal($("modal-guardar")); });
+    $("guardar-confirmar").addEventListener("click", function(){
+      const nombre = $("input-guardar-nombre").value.trim() || ("Jugada " + (jugadas.length + 1));
+      if(existeDuplicada(nuevaPendiente, -1)){ $("guardar-error").textContent = "Números ya agregados"; return; }
+      if(guardarNueva(nombre, nuevaPendiente)){ closeModal($("modal-guardar")); }
+    });
+
+    $("editar-cancelar").addEventListener("click", function(){ closeModal($("modal-editar")); });
+    $("editar-cambiar-numeros").addEventListener("click", function(){ closeModal($("modal-editar")); openPicker("edit", editNumeros, function(nums){ editNumeros = nums; renderBalls("editar-preview", editNumeros); openModal($("modal-editar")); }); });
+    $("editar-confirmar").addEventListener("click", function(){
+      if(editIndex < 0 || !jugadas[editIndex]) return;
+      const nombre = $("input-editar-nombre").value.trim() || jugadas[editIndex].nombre;
+      if(existeDuplicada(editNumeros, editIndex)){ $("editar-error").textContent = "Números ya agregados"; return; }
+      jugadas[editIndex].nombre = nombre;
+      jugadas[editIndex].numeros = sortedNums(editNumeros);
+      guardarJugadas(); renderJugadas(); closeModal($("modal-editar")); showToast("Jugada actualizada");
+      if(detalleIndex === editIndex) abrirDetalleJugada(editIndex);
+    });
+
+    $("confirmar-cancelar").addEventListener("click", function(){ closeModal($("modal-confirmar")); confirmarCallback = null; });
+    $("confirmar-aceptar").addEventListener("click", function(){ const cb = confirmarCallback; closeModal($("modal-confirmar")); confirmarCallback = null; if(typeof cb === "function") cb(); });
+
+    $("picker-close").addEventListener("click", function(){ cerrarPicker(); });
+    $("picker-cancel").addEventListener("click", function(){ cerrarPicker(); });
+
+    $("ultimos-select-jugada").addEventListener("change", function(){
+      const i = parseInt(this.value,10);
+      if(!isNaN(i) && jugadas[i]){ ultimosNums = clone(jugadas[i].numeros); renderBalls("ultimos-pick", ultimosNums); renderUltimosResultado(); }
+    });
+    $("ultimos-select-sorteo").addEventListener("change", renderUltimosResultado);
+    $("btn-ultimos-custom").addEventListener("click", function(){ openPicker("ultimos", ultimosNums, function(nums){ ultimosNums = nums; $("ultimos-select-jugada").value = ""; renderBalls("ultimos-pick", ultimosNums); renderUltimosResultado(); }); });
+
+    $("btn-compartir-jugadas").addEventListener("click", abrirCompartir);
+    $("share-close").addEventListener("click", function(){ closeModal($("modal-compartir")); });
+    $("share-all").addEventListener("click", function(){ compartirSeleccionadas = new Set(jugadasOrdenadasConIndice().map(x=>x.i)); renderCompartir(); });
+    $("share-none").addEventListener("click", function(){ compartirSeleccionadas = new Set(); renderCompartir(); });
+    $("share-copy").addEventListener("click", function(){ copiarTexto(textoCompartir()); });
+    $("share-wpp").addEventListener("click", compartirWhatsApp);
+
+    $("btn-ruleta-generar").addEventListener("click", generarRuleta);
+    $("btn-ruleta-guardar").addEventListener("click", function(){
+      if(!ruletaNums.length){ generarRuleta(); }
+      if(existeDuplicada(ruletaNums, -1)){ showToast("Números ya agregados"); return; }
+      abrirGuardar(ruletaNums, "Ruleta " + (jugadas.length + 1));
+    });
+  }
+
+  function iniciar(){
+    cargarTema();
+    construirPicker();
+    cargarJugadas();
+    renderUltimo();
+    renderDetallesUltimo();
+    renderJugadas();
+    renderSelectSorteos();
+    generarRuleta();
+    initEvents();
+  }
+
+  iniciar();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis jugadas guardadas - Brinco</title>
+  <style>
+    :root{
+      --azul:#0867b2;
+      --azul-oscuro:#064b83;
+      --amarillo:#ffd62e;
+      --fondo:#f3f6f9;
+      --card:#ffffff;
+      --texto:#1d2733;
+      --muted:#68717b;
+      --borde:#dce5ec;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Arial,Helvetica,sans-serif;
+      background:var(--fondo);
+      color:var(--texto);
+    }
+
+    .app{
+      width:100%;
+      max-width:720px;
+      margin:0 auto;
+      padding:16px;
+    }
+
+    .header{
+      background:linear-gradient(135deg,var(--azul),var(--azul-oscuro));
+      color:#fff;
+      border-radius:20px;
+      padding:22px 18px;
+      box-shadow:0 8px 24px rgba(0,0,0,.10);
+      margin-bottom:14px;
+      border-bottom:5px solid var(--amarillo);
+    }
+
+    .header h1{
+      margin:0 0 6px;
+      font-size:24px;
+      line-height:1.15;
+    }
+
+    .header p{
+      margin:0;
+      font-size:14px;
+      opacity:.96;
+      line-height:1.4;
+    }
+
+    .barra{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:var(--card);
+      border:1px solid var(--borde);
+      border-radius:16px;
+      padding:13px 14px;
+      margin-bottom:14px;
+    }
+
+    .contador{
+      font-weight:800;
+      font-size:15px;
+    }
+
+    .acciones{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    button{
+      border:0;
+      border-radius:11px;
+      padding:10px 12px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .btn-azul{
+      background:var(--azul);
+      color:#fff;
+    }
+
+    .btn-negro{
+      background:#222;
+      color:#fff;
+    }
+
+    .lista{
+      display:grid;
+      gap:12px;
+    }
+
+    .jugada{
+      background:var(--card);
+      border:1px solid var(--borde);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 3px 12px rgba(0,0,0,.045);
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .nombre{
+      font-size:18px;
+      font-weight:900;
+      word-break:break-word;
+    }
+
+    .favorita{
+      display:inline-block;
+      margin-left:6px;
+      font-size:12px;
+      color:#8b6d00;
+      background:#fff7bf;
+      border:1px solid #f3df72;
+      border-radius:999px;
+      padding:3px 7px;
+      vertical-align:middle;
+    }
+
+    .fecha{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      padding-top:2px;
+    }
+
+    .numeros{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:13px;
+    }
+
+    .bola{
+      width:43px;
+      height:43px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--amarillo);
+      color:#111;
+      border:2px solid var(--azul);
+      font-size:16px;
+      font-weight:900;
+      box-shadow:inset 0 -2px 0 rgba(0,0,0,.08);
+    }
+
+    .copiar-jugada{
+      width:100%;
+      background:#edf5fb;
+      color:var(--azul-oscuro);
+      border:1px solid #d5e7f5;
+    }
+
+    .estado{
+      background:var(--card);
+      border:1px solid var(--borde);
+      border-radius:18px;
+      padding:25px 18px;
+      text-align:center;
+    }
+
+    .estado strong{
+      display:block;
+      font-size:17px;
+      margin-bottom:6px;
+    }
+
+    .estado span{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .pie{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      padding:15px 8px 5px;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      background:#1f2933;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      z-index:1000;
+      max-width:90%;
+      text-align:center;
+    }
+
+    .toast.show{opacity:1}
+
+    @media (max-width:470px){
+      .barra{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .acciones{
+        width:100%;
+      }
+
+      .acciones button{
+        flex:1;
+      }
+
+      .bola{
+        width:40px;
+        height:40px;
+        font-size:15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+
+    <section class="header">
+      <h1>Mis jugadas guardadas</h1>
+      <p>Brinco · Respaldo y visualización de tus combinaciones guardadas</p>
+    </section>
+
+    <section class="barra">
+      <div class="contador" id="contador">Buscando jugadas...</div>
+
+      <div class="acciones">
+        <button class="btn-azul" id="actualizar" type="button">Actualizar</button>
+        <button class="btn-negro" id="copiar-todas" type="button">Copiar todas</button>
+      </div>
+    </section>
+
+    <section class="lista" id="lista"></section>
+
+    <div class="pie">
+      Visor de solo lectura. Este código no agrega, modifica ni elimina jugadas.
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      // Dirección real utilizada por Brinco.
+      const STORAGE_JUGADAS = "brinco_mis_jugadas_v1";
+
+      const lista = document.getElementById("lista");
+      const contador = document.getElementById("contador");
+      const btnActualizar = document.getElementById("actualizar");
+      const btnCopiarTodas = document.getElementById("copiar-todas");
+      const toast = document.getElementById("toast");
+
+      let jugadasActuales = [];
+
+      function fmt2(valor){
+        const n = parseInt(valor,10);
+        if(Number.isNaN(n)) return String(valor);
+        return String(n).padStart(2,"0");
+      }
+
+      function ordenarNumeros(nums){
+        return nums
+          .map(fmt2)
+          .sort((a,b)=>parseInt(a,10)-parseInt(b,10));
+      }
+
+      function fechaDesdeTimestamp(ts){
+        const n = Number(ts);
+        if(!Number.isFinite(n) || n <= 0) return "";
+
+        try{
+          const d = new Date(n);
+          if(Number.isNaN(d.getTime())) return "";
+
+          return String(d.getDate()).padStart(2,"0") + "-" +
+                 String(d.getMonth()+1).padStart(2,"0") + "-" +
+                 d.getFullYear();
+        }catch(e){
+          return "";
+        }
+      }
+
+      function normalizar(item, indice){
+        // Compatibilidad adicional por si alguna versión vieja
+        // hubiera guardado directamente un array de números.
+        if(Array.isArray(item)){
+          return {
+            nombre:"Jugada " + (indice + 1),
+            numeros:ordenarNumeros(item),
+            fecha:"",
+            favoritaOrden:null,
+            creada:0
+          };
+        }
+
+        if(item && typeof item === "object" && Array.isArray(item.numeros)){
+          return {
+            nombre:item.nombre || ("Jugada " + (indice + 1)),
+            numeros:ordenarNumeros(item.numeros),
+            fecha:item.fecha || fechaDesdeTimestamp(item.creada) || "",
+            favoritaOrden:item.favoritaOrden || null,
+            creada:item.creada || 0
+          };
+        }
+
+        return null;
+      }
+
+      function ordenarJugadas(arr){
+        return arr.slice().sort((a,b)=>{
+          const af = a.favoritaOrden || 999999999;
+          const bf = b.favoritaOrden || 999999999;
+
+          if(af !== bf) return af - bf;
+
+          const ac = Number(a.creada || 0);
+          const bc = Number(b.creada || 0);
+
+          if(ac && bc && ac !== bc) return ac - bc;
+          return 0;
+        });
+      }
+
+      function mostrarToast(texto){
+        toast.textContent = texto;
+        toast.classList.add("show");
+
+        clearTimeout(mostrarToast._t);
+        mostrarToast._t = setTimeout(()=>{
+          toast.classList.remove("show");
+        },1600);
+      }
+
+      async function copiarTexto(texto){
+        try{
+          await navigator.clipboard.writeText(texto);
+          return true;
+        }catch(e){
+          try{
+            const ta = document.createElement("textarea");
+            ta.value = texto;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+
+            const ok = document.execCommand("copy");
+
+            ta.remove();
+            return ok;
+          }catch(_){
+            return false;
+          }
+        }
+      }
+
+      function textoJugada(j){
+        let t = (j.nombre || "Jugada") + "\n";
+        t += j.numeros.join(" - ");
+
+        if(j.fecha){
+          t += "\nFecha: " + j.fecha;
+        }
+
+        return t;
+      }
+
+      function crearTarjeta(jugada){
+        const card = document.createElement("article");
+        card.className = "jugada";
+
+        const top = document.createElement("div");
+        top.className = "top";
+
+        const nombre = document.createElement("div");
+        nombre.className = "nombre";
+        nombre.appendChild(document.createTextNode(jugada.nombre));
+
+        if(jugada.favoritaOrden){
+          const fav = document.createElement("span");
+          fav.className = "favorita";
+          fav.textContent = "★ Favorita";
+          nombre.appendChild(fav);
+        }
+
+        top.appendChild(nombre);
+
+        if(jugada.fecha){
+          const fecha = document.createElement("div");
+          fecha.className = "fecha";
+          fecha.textContent = jugada.fecha;
+          top.appendChild(fecha);
+        }
+
+        const numeros = document.createElement("div");
+        numeros.className = "numeros";
+
+        jugada.numeros.forEach(n=>{
+          const bola = document.createElement("div");
+          bola.className = "bola";
+          bola.textContent = fmt2(n);
+          numeros.appendChild(bola);
+        });
+
+        const copiar = document.createElement("button");
+        copiar.type = "button";
+        copiar.className = "copiar-jugada";
+        copiar.textContent = "Copiar esta jugada";
+
+        copiar.addEventListener("click", async ()=>{
+          const ok = await copiarTexto(textoJugada(jugada));
+          mostrarToast(ok ? "Jugada copiada ✓" : "No se pudo copiar");
+        });
+
+        card.appendChild(top);
+        card.appendChild(numeros);
+        card.appendChild(copiar);
+
+        return card;
+      }
+
+      function mostrarVacio(){
+        jugadasActuales = [];
+        lista.innerHTML = "";
+        contador.textContent = "0 jugadas guardadas";
+
+        const estado = document.createElement("div");
+        estado.className = "estado";
+
+        const titulo = document.createElement("strong");
+        titulo.textContent = "No hay jugadas guardadas";
+
+        const texto = document.createElement("span");
+        texto.textContent = "No se encontraron combinaciones de Brinco en este almacenamiento.";
+
+        estado.appendChild(titulo);
+        estado.appendChild(texto);
+        lista.appendChild(estado);
+      }
+
+      function mostrarError(){
+        jugadasActuales = [];
+        lista.innerHTML = "";
+        contador.textContent = "Sin acceso";
+
+        const estado = document.createElement("div");
+        estado.className = "estado";
+
+        const titulo = document.createElement("strong");
+        titulo.textContent = "No se pudo leer el almacenamiento";
+
+        const texto = document.createElement("span");
+        texto.textContent = "Esta página no puede acceder a las jugadas guardadas en este origen.";
+
+        estado.appendChild(titulo);
+        estado.appendChild(texto);
+        lista.appendChild(estado);
+      }
+
+      function cargar(){
+        try{
+          const raw = localStorage.getItem(STORAGE_JUGADAS);
+
+          if(!raw){
+            mostrarVacio();
+            return;
+          }
+
+          const parsed = JSON.parse(raw);
+
+          if(!Array.isArray(parsed)){
+            mostrarVacio();
+            return;
+          }
+
+          const normalizadas = parsed
+            .map(normalizar)
+            .filter(j =>
+              j &&
+              Array.isArray(j.numeros) &&
+              j.numeros.length > 0
+            );
+
+          jugadasActuales = ordenarJugadas(normalizadas);
+
+          if(!jugadasActuales.length){
+            mostrarVacio();
+            return;
+          }
+
+          lista.innerHTML = "";
+
+          jugadasActuales.forEach(j=>{
+            lista.appendChild(crearTarjeta(j));
+          });
+
+          contador.textContent =
+            jugadasActuales.length === 1
+              ? "1 jugada guardada"
+              : jugadasActuales.length + " jugadas guardadas";
+
+        }catch(e){
+          console.error(e);
+          mostrarError();
+        }
+      }
+
+      btnActualizar.addEventListener("click", ()=>{
+        cargar();
+        mostrarToast("Actualizado");
+      });
+
+      btnCopiarTodas.addEventListener("click", async ()=>{
+        if(!jugadasActuales.length){
+          mostrarToast("No hay jugadas para copiar");
+          return;
+        }
+
+        const texto =
+          "BRINCO - MIS JUGADAS GUARDADAS\n\n" +
+          jugadasActuales.map(textoJugada).join("\n\n");
+
+        const ok = await copiarTexto(texto);
+
+        mostrarToast(
+          ok ? "Todas las jugadas copiadas ✓" : "No se pudo copiar"
+        );
+      });
+
+      // SOLO LECTURA:
+      // No usa localStorage.setItem(), removeItem() ni clear().
+      cargar();
+    })();
+  </script>
+</body>
+</html>
